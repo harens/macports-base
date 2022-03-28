@@ -1687,7 +1687,7 @@ proc macports::fetch_port {url {local 0}} {
     set tarcmd [findBinary tar $macports::autoconf::tar_path]
     set tarflags [get_tar_flags [file extension $filepath]]
     set qflag $macports::autoconf::tar_q
-    set cmdline [list $tarcmd ${tarflags}${qflag}xOf $filepath ./+CONTENTS]
+    set cmdline [list $tarcmd ${tarflags}${qflag}xOf $filepath]
     ui_debug $cmdline
     if {![catch {set contents [exec {*}$cmdline]}]} {
         # the file is probably a valid binary archive
