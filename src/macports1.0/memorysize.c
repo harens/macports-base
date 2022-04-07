@@ -1,7 +1,7 @@
 /*
- * sysctl.h
+ * memorysize.c
  *
- * Copyright (c) 2009 The MacPorts Project
+ * Copyright (c) 2022 The MacPorts Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,5 +29,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* Read-only wrapper for sysctlbyname(3) */
-int SysctlCmd(ClientData, Tcl_Interp *, int, Tcl_Obj *CONST objv[]);
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <tcl.h>
+#include <unistd.h>
+
+#include "memory.h"
+
+/*
+ * Determine memory size - equivalent to sysctl hw.memsize on Darwin.
+ */
+int MemoryCmd(ClientData clientData UNUSED, Tcl_Interp *interp, int objc UNUSED, Tcl_Obj *CONST objv[] UNUSED)
+{
+    long pages = sysconf(_SC_PHYS_PAGES);
+    long page_size = sysconf(_SC_PAGE_SIZE);
+    unsigned long long res = pages * page_size;
+    if (res < 1)
+    {
+        Tcl_SetObjResult(interp, Tcl_NewStringObj("sysconf not available", -1));
+        return TCL_ERROR;
+    }
+    Tcl_SetObjResult(interp, Tcl_NewIntObj(res));
+    return TCL_OK;
+}

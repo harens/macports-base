@@ -1,8 +1,7 @@
 /*
- * macports.c
+ * memorysize.h
  *
  * Copyright (c) 2009 The MacPorts Project
- * Copyright (c) 2003 Apple Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13,7 +12,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright owner nor the names of contributors
+ * 3. Neither the name of The MacPorts Project nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  * 
@@ -30,25 +29,5 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <tcl.h>
-
-#include "get_systemconfiguration_proxies.h"
-#include "nproc.h"
-#include "memorysize.h"
-
-int
-Macports_Init(Tcl_Interp *interp)
-{
-	if (Tcl_InitStubs(interp, "8.4", 0) == NULL)
-		return TCL_ERROR;
-	Tcl_CreateObjCommand(interp, "get_systemconfiguration_proxies", GetSystemConfigurationProxiesCmd, NULL, NULL);
-	Tcl_CreateObjCommand(interp, "memorysize", MemoryCmd, NULL, NULL);
-	Tcl_CreateObjCommand(interp, "nproc", NprocCmd, NULL, NULL);
-	if (Tcl_PkgProvide(interp, "macports", "1.0") != TCL_OK)
-		return TCL_ERROR;
-	return TCL_OK;
-}
+/* Read-only wrapper for modified sysconf(3) memory values */
+int MemoryCmd(ClientData, Tcl_Interp *, int, Tcl_Obj *CONST objv[]);
