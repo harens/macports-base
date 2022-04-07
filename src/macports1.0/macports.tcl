@@ -1135,7 +1135,7 @@ match macports.conf.default."
                     set macports::build_arch x86_64
                 }
             } elseif {$os_major >= 10} {
-                if {[sysctl hw.cpu64bit_capable] == 1} {
+                if {$tcl_platform(machine) eq "x86_64"} {
                     set macports::build_arch x86_64
                 } else {
                     set macports::build_arch i386
@@ -1148,7 +1148,12 @@ match macports.conf.default."
                 }
             }
         } else {
-            set macports::build_arch {}
+            # List of currently supported CPU architectures
+            if {$tcl_platform(machine) in [list arm64 x86_64 i386 ppc]} {
+                set macports::build_arch $tcl_platform(machine)
+            } else {
+                set macports::build_arch {}
+            }
         }
     } else {
         set macports::build_arch [lindex $macports::build_arch 0]
