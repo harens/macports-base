@@ -1135,10 +1135,14 @@ match macports.conf.default."
                     set macports::build_arch x86_64
                 }
             } elseif {$os_major >= 10} {
-                if {$tcl_platform(machine) eq "x86_64"} {
-                    set macports::build_arch x86_64
-                } else {
-                    set macports::build_arch i386
+                set getconf [list [findBinary getconf /usr/bin/getconf] LONG_BIT]
+                ui_debug $getconf
+                if {![catch {set contents [exec {*}$getconf]}]} {
+                    if {$contents eq "64"} {
+                        set macports::build_arch x86_64
+                    } else {
+                        set macports::build_arch i386
+                    }
                 }
             } else {
                 if {$os_arch eq "powerpc"} {
