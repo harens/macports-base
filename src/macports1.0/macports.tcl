@@ -1135,10 +1135,14 @@ match macports.conf.default."
                     set macports::build_arch x86_64
                 }
             } elseif {$os_major >= 10} {
-                if {[sysctl hw.cpu64bit_capable] == 1} {
-                    set macports::build_arch x86_64
-                } else {
-                    set macports::build_arch i386
+                set getconf [list [findBinary getconf /usr/bin/getconf] LONG_BIT]
+                ui_debug $getconf
+                if {![catch {set contents [exec {*}$getconf]}]} {
+                    if {$contents eq "64"} {
+                        set macports::build_arch x86_64
+                    } else {
+                        set macports::build_arch i386
+                    }
                 }
             } else {
                 if {$os_arch eq "powerpc"} {
@@ -1510,7 +1514,8 @@ proc macports::worker_init {workername portpath porturl portbuildpath options va
     $workername alias getportdir macports::getportdir
     $workername alias findBinary macports::findBinary
     $workername alias binaryInPath macports::binaryInPath
-    $workername alias sysctl sysctl
+    $workername alias nproc nproc
+    $workername alias memorysize memorysize
     $workername alias realpath realpath
     $workername alias _mportsearchpath _mportsearchpath
     $workername alias _portnameactive _portnameactive

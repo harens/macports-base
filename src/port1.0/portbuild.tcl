@@ -140,7 +140,7 @@ proc portbuild::build_getjobs {args} {
     # if set to '0', use the number of cores for the number of jobs
     if {$jobs == 0} {
         try -pass_signal {
-            set jobs [sysctl hw.activecpu]
+            set jobs [nproc]
         } catch {{*} eCode eMessage} {
             set jobs 2
             ui_warn "failed to determine the number of available CPUs (probably not supported on this platform)"
@@ -148,7 +148,7 @@ proc portbuild::build_getjobs {args} {
         }
 
         try -pass_signal {
-            set memsize [sysctl hw.memsize]
+            set memsize [memorysize]
             if {$jobs > $memsize / (1024 * 1024 * 1024) + 1} {
                 set jobs [expr {$memsize / (1024 * 1024 * 1024) + 1}]
             }

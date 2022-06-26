@@ -23,34 +23,34 @@ package require portbuild 1.0
 
 set build_getjobs_fixture_setup {
     # Move away sysctl and replace it with our own implementation
-    rename sysctl sysctl_backup
-    proc sysctl {sysctlname} {
-        global _activecpus _memsize _activecpus_fail _memsize_fail
-        switch -exact $sysctlname {
-            hw.activecpu {
-                if {${_activecpus_fail}} {
-                    error "error requested"
-                }
-                return ${_activecpus}
-            }
-            hw.memsize {
-                if {${_memsize_fail}} {
-                    error "error requested"
-                }
-                return [expr {${_memsize} * 1024 * 1024 * 1024}]
-            }
-            default {
-                error "Unknown sysctl property $sysctlname"
-            }
+    rename memorysize memorysize_backup
+    rename nproc nproc_backup
+
+    proc nproc {} {
+        global _activecpus _activecpus_fail
+        if {${_activecpus_fail}} {
+            error "error requested"
         }
+        return ${_activecpus}
+    }
+
+    proc memorysize {} {
+        global _memsize _memsize_fail
+        if {${_memsize_fail}} {
+            error "error requested"
+        }
+        return [expr {${_memsize} * 1024 * 1024 * 1024}]
     }
 }
 set build_getjobs_fixture_cleanup {
     global buildmakejobs
 
     # Restore modified state
-    rename sysctl ""
-    rename sysctl_backup sysctl
+    rename memorysize ""
+    rename memorysize_backup memorysize
+
+    rename nproc ""
+    rename nproc_backup nproc
 }
 
 test build_getjobs_auto_cpubound {
