@@ -1135,7 +1135,7 @@ match macports.conf.default."
                     set macports::build_arch x86_64
                 }
             } elseif {$os_major >= 10} {
-                set getconf [list [findBinary getconf /usr/bin/getconf] LONG_BIT]
+                set getconf [list [macports::findBinary getconf /usr/bin/getconf] LONG_BIT]
                 ui_debug $getconf
                 if {![catch {set contents [exec {*}$getconf]}]} {
                     if {$contents eq "64"} {
