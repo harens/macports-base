@@ -28,7 +28,7 @@ jobs:
         run: >
           sudo apt update &&
           sudo apt install mtree-netbsd
-          gnustep libcurl4-gnutls-dev
+          libcurl4-openssl-dev
       - name: Configure MacPorts Base
         run: |
           set -eu
